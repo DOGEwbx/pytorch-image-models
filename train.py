@@ -297,7 +297,7 @@ def main():
 
     use_amp = False
     if has_apex and args.amp:
-        model, optimizer = amp.initialize(model, optimizer, opt_level='O1')
+        model, optimizer = amp.initialize(model, optimizer, opt_level='O3', keep_batchnorm_fp32=True)
         use_amp = True
     if args.local_rank == 0:
         logging.info('NVIDIA APEX {}. AMP {}.'.format(
