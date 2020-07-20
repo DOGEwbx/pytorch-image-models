@@ -127,7 +127,8 @@ def _extract_tar_info(tarfile, class_to_idx=None, sort=True):
 
 
 class DatasetTar(data.Dataset):
-
+    """ Dataset wrapper to read data from tar file. """
+     
     def __init__(self, root, load_bytes=False, transform=None, class_map=''):
 
         class_to_idx = None
@@ -158,7 +159,13 @@ class DatasetTar(data.Dataset):
 
 
 class AugMixDataset(torch.utils.data.Dataset):
-    """Dataset wrapper to perform AugMix or other clean/augmentation mixes"""
+    """ 
+        Dataset wrapper to perform AugMix or other clean/augmentation mixes
+
+        Returns:
+            A list of augmented data samples. list[i] has been perform operation i times
+            on the data sample.
+    """
 
     def __init__(self, dataset, num_splits=2):
         self.augmentation = None

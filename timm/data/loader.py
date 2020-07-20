@@ -44,7 +44,10 @@ def fast_collate(batch):
 
 
 class PrefetchLoader:
-
+    """
+        Prefetch another batch of data before the current batch is consumed. 
+        The prefeched batch is sent to device to accelerate the throughput.
+    """
     def __init__(self,
                  loader,
                  mean=IMAGENET_DEFAULT_MEAN,
@@ -207,6 +210,10 @@ def create_loader(
 
 
 class MultiEpochsDataLoader(torch.utils.data.DataLoader):
+    """ 
+        Use RepeatSampler to replace the original sampler so the 
+        iterator doesn't have to restart in each epoch.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
