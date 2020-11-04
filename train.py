@@ -596,8 +596,9 @@ def train_epoch(
         if args.local_rank == 0:
             if last_batch or batch_idx % args.heartbeat_interval == 0:
                 print("report speed")
-                # call grpc
-            if num_updates + batch_idx + 1 == args.mini_batch_num :
+                # call report grpc
+            if num_updates + batch_idx + 1 >= args.mini_batch_num :
+                print(num_updates)
                 print("report job finished! The container will be killed")
                 # call finish grpc
 
