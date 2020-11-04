@@ -512,8 +512,9 @@ def main():
 def train_epoch(
         epoch, model, loader, optimizer, loss_fn, args,
         lr_scheduler=None, saver=None, output_dir='', use_amp=False, model_ema=None):
-    print("report GRPC for epoch start!")
-    # add grpc
+    if args.local_rank==0:
+        print("report GRPC for epoch start!")
+        # add grpc
 
     if args.prefetcher and args.mixup > 0 and loader.mixup_enabled:
         if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
