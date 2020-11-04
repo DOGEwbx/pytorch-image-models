@@ -50,11 +50,16 @@ parser.add_argument('-c', '--config', default='', type=str, metavar='FILE',
 
 
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
-# Dataset / Model parameters
+# Additional parameters for testing
 parser.add_argument('data', metavar='DIR',
                     help='path to dataset')
 parser.add_argument('--model', default='resnet101', type=str, metavar='MODEL',
                     help='Name of model to train (default: "countception"')
+parser.add_argument('--mini-batch-num', type=int, default=50000, help='Minibatch number (default: 50000)')
+parser.add_argument('--heartbeat-interval', type=int, default=10, help="report speed for every interval (default: 10)")
+# Dataset / Model parameters
+
+
 parser.add_argument('--pretrained', action='store_true', default=False,
                     help='Start with pretrained version of specified network (if avail)')
 parser.add_argument('--initial-checkpoint', default='', type=str, metavar='PATH',
@@ -455,8 +460,10 @@ def main():
         saver = CheckpointSaver(checkpoint_dir=output_dir, decreasing=decreasing)
         with open(os.path.join(output_dir, 'args.yaml'), 'w') as f:
             f.write(args_text)
-
+        print("start training, report to GRPC")
+        # add gprc start
     try:
+        
         for epoch in range(start_epoch, num_epochs):
             if args.distributed:
                 loader_train.sampler.set_epoch(epoch)
@@ -505,6 +512,8 @@ def main():
 def train_epoch(
         epoch, model, loader, optimizer, loss_fn, args,
         lr_scheduler=None, saver=None, output_dir='', use_amp=False, model_ema=None):
+    print("report GRPC for epoch start!")
+    # add grpc
 
     if args.prefetcher and args.mixup > 0 and loader.mixup_enabled:
         if args.mixup_off_epoch and epoch >= args.mixup_off_epoch:
@@ -582,6 +591,14 @@ def train_epoch(
                         os.path.join(output_dir, 'train-batch-%d.jpg' % batch_idx),
                         padding=0,
                         normalize=True)
+        # report module
+        if args.local_rank == 0:
+            if last_batch or batch_idx % args.heartbeat_interval == 0:
+                print("report speed")
+                # call grpc
+            if num_updates + batch_idx + 1 == args.mini_batch_num :
+                print("report job finished! The container will be killed")
+                # call finish grpc
 
         if saver is not None and args.recovery_interval and (
                 last_batch or (batch_idx + 1) % args.recovery_interval == 0):

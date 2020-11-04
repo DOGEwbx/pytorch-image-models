@@ -1,0 +1,1 @@
+./distributed_train.sh $DATA_DIR -b 160 --model $MODEL_NAME --mini-batch-num $MINI_BATCH_NUM --sched cosine --epochs 2000 --lr 0.05 --amp --use-multi-epochs-loader --pin-mem 
