@@ -302,7 +302,7 @@ def main():
 
     use_amp = False
     if has_apex and args.amp:
-        model, optimizer = amp.initialize(model, optimizer, opt_level='O2')
+        model, optimizer = amp.initialize(model, optimizer, opt_level='O3')
         use_amp = True
     if args.local_rank == 0:
         logging.info('NVIDIA APEX {}. AMP {}.'.format(
@@ -597,7 +597,7 @@ def train_epoch(
             if last_batch or batch_idx % args.heartbeat_interval == 0:
                 print("report speed")
                 # call report grpc
-            if num_updates + batch_idx + 1 >= args.mini_batch_num :
+            if num_updates >= args.mini_batch_num :
                 print(num_updates)
                 print("report job finished! The container will be killed")
                 # call finish grpc
